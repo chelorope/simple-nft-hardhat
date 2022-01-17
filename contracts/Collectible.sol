@@ -8,7 +8,7 @@ pragma solidity ^0.7.6;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@chainlink/contracts/src/v0.7/VRFConsumerBase.sol";
 
-contract AdvancedCollectible is ERC721, VRFConsumerBase {
+contract Collectible is ERC721, VRFConsumerBase {
   uint256 public tokenCounter;
   bytes32 public keyhash;
   uint256 public fee;

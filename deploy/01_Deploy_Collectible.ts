@@ -1,6 +1,7 @@
-import { networkConfig } from "../config";
+import networkConfig from "../config";
 import { DeployFunction } from "hardhat-deploy/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
+import { isDevelopementChain } from "../scripts/util";
 
 const deployCollectible: DeployFunction = async ({
   getNamedAccounts,
@@ -9,16 +10,16 @@ const deployCollectible: DeployFunction = async ({
 }: HardhatRuntimeEnvironment) => {
   const { deploy, get, log } = deployments;
   const { deployer } = await getNamedAccounts();
-  const chainId = Number(await getChainId());
+  const chainId = await getChainId();
   const CONFIG = networkConfig[chainId];
   let linkTokenAddress;
   let vrfCoordinatorAddress;
   let additionalMessage = "";
 
-  console.log("CHAIN ID: ", chainId);
-  if (chainId === 31337) {
+  log("CHAIN ID: ", chainId);
+  if (isDevelopementChain(chainId)) {
     const linkToken = await get("LinkToken");
-    console.log("LINK TOKEN: ", linkToken);
+    log("LINK TOKEN: ", linkToken);
     const VRFCoordinatorMock = await get("VRFCoordinatorMock");
     linkTokenAddress = linkToken.address;
     vrfCoordinatorAddress = VRFCoordinatorMock.address;

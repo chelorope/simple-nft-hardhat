@@ -1,6 +1,5 @@
 import * as dotenv from "dotenv";
-
-import { HardhatUserConfig, task } from "hardhat/config";
+import { HardhatUserConfig } from "hardhat/config";
 import "@nomiclabs/hardhat-etherscan";
 import "@nomiclabs/hardhat-waffle";
 import "@nomiclabs/hardhat-ethers";
@@ -10,6 +9,17 @@ import "hardhat-gas-reporter";
 import "solidity-coverage";
 import "@nomiclabs/hardhat-truffle5";
 import "@appliedblockchain/chainlink-plugins-fund-link";
+
+import "./tasks/accounts";
+import "./tasks/contracts";
+import "./tasks/balance";
+import "./tasks/withdraw-link";
+import "./tasks/block-number";
+import "./tasks/random-number-consumer";
+
+// import "./tasks/price-consumer";
+// import "./tasks/api-consumer";
+// import "./tasks/keepers";
 
 dotenv.config();
 
@@ -30,6 +40,7 @@ const POLYGON_MAINNET_RPC_URL =
   process.env.POLYGON_MAINNET_RPC_URL ||
   "https://polygon-mainnet.alchemyapi.io/v2/your-api-key";
 const MNEMONIC = process.env.MNEMONIC || "your mnemonic";
+const GANACHE_MNEMONIC = process.env.GANACHE_MNEMONIC || "";
 const ETHERSCAN_API_KEY =
   process.env.ETHERSCAN_API_KEY || "Your etherscan API key";
 // optional
@@ -62,9 +73,9 @@ const config: HardhatUserConfig = {
       saveDeployments: true,
     },
     ganache: {
-      url: "http://localhost:8545",
+      url: "http://localhost:7545",
       accounts: {
-        mnemonic: MNEMONIC,
+        mnemonic: GANACHE_MNEMONIC,
       },
     },
     mainnet: {

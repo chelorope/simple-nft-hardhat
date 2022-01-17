@@ -1,6 +1,4 @@
-import { ethers, getChainId } from "hardhat";
-
-export const networkConfig: Record<number | "default", any> = {
+const networkConfig: Record<string, any> = {
   default: {
     name: "hardhat",
     fee: "100000000000000000",
@@ -10,7 +8,7 @@ export const networkConfig: Record<number | "default", any> = {
     fundAmount: "1000000000000000000",
     keepersUpdateInterval: "30",
   },
-  31337: {
+  "31337": {
     name: "localhost",
     fee: "100000000000000000",
     keyHash:
@@ -19,7 +17,16 @@ export const networkConfig: Record<number | "default", any> = {
     fundAmount: "1000000000000000000",
     keepersUpdateInterval: "30",
   },
-  42: {
+  "1337": {
+    name: "ganache",
+    fee: "100000000000000000",
+    keyHash:
+      "0x6c3699283bda56ad74f6b855546325b68d482e983852a7a82979cc4807b641f4",
+    jobId: "29fa9aa13bf1468788b7cc4a500a45b8",
+    fundAmount: "1000000000000000000",
+    keepersUpdateInterval: "30",
+  },
+  "42": {
     name: "kovan",
     linkToken: "0xa36085F69e2889c224210F603D836748e7dC0088",
     ethUsdPriceFeed: "0x9326BFA02ADD2366b30bacB125260Af641031331",
@@ -32,7 +39,7 @@ export const networkConfig: Record<number | "default", any> = {
     fundAmount: "1000000000000000000",
     keepersUpdateInterval: "30",
   },
-  4: {
+  "4": {
     name: "rinkeby",
     linkToken: "0x01be23585060835e02b77ef475b0cc51aa1e0709",
     ethUsdPriceFeed: "0x8A753747A1Fa494EC906cE90E9f37563A8AF630e",
@@ -45,18 +52,18 @@ export const networkConfig: Record<number | "default", any> = {
     fundAmount: "1000000000000000000",
     keepersUpdateInterval: "30",
   },
-  1: {
+  "1": {
     name: "mainnet",
     linkToken: "0x514910771af9ca656af840dff83e8264ecf986ca",
     fundAmount: "0",
     keepersUpdateInterval: "30",
   },
-  5: {
+  "5": {
     name: "goerli",
     linkToken: "0x326c977e6efc84e512bb9c30f76e30c160ed06fb",
     fundAmount: "0",
   },
-  80001: {
+  "80001": {
     name: "mumbai",
     linkToken: "0x326C977E6efc84E512bB9C30f76E30c160eD06FB",
     ethUsdPriceFeed: "0x0715A7794a1dc8e42615F059dD6e406A6594651A",
@@ -68,7 +75,7 @@ export const networkConfig: Record<number | "default", any> = {
     fee: "100000000000000",
     fundAmount: "100000000000000",
   },
-  137: {
+  "137": {
     name: "polygon",
     linkToken: "0xb0897686c545045afc77cf20ec7a532e3120e0f1",
     ethUsdPriceFeed: "0xF9680D99D6C9589e2a93a78A04A279e509205945",
@@ -82,62 +89,6 @@ export const networkConfig: Record<number | "default", any> = {
   },
 };
 
-export const developmentChains = ["hardhat", "localhost"];
+export default networkConfig;
 
-export const getNetworkIdFromName = async (networkIdName: string) => {
-  for (const id in networkConfig) {
-    if (networkConfig[id].name === networkIdName) {
-      return id;
-    }
-  }
-  return null;
-};
-
-export const autoFundCheck = async (
-  contractAddr: string,
-  networkName: string,
-  linkTokenAddress: string,
-  additionalMessage: string
-) => {
-  const chainId = Number(await getChainId());
-  console.log("Checking to see if contract can be auto-funded with LINK:");
-  const amount = networkConfig[chainId].fundAmount;
-  // check to see if user has enough LINK
-  const accounts = await ethers.getSigners();
-  const signer = accounts[0];
-  const LinkToken = await ethers.getContractFactory("LinkToken");
-  const linkTokenContract = new ethers.Contract(
-    linkTokenAddress,
-    LinkToken.interface,
-    signer
-  );
-  const balanceHex = await linkTokenContract.balanceOf(signer.address);
-  const balance = await ethers.BigNumber.from(balanceHex._hex).toString();
-  const contractBalanceHex = await linkTokenContract.balanceOf(contractAddr);
-  const contractBalance = await ethers.BigNumber.from(
-    contractBalanceHex._hex
-  ).toString();
-  if (balance > amount && amount > 0 && contractBalance < amount) {
-    // user has enough LINK to auto-fund
-    // and the contract isn't already funded
-    return true;
-  } else {
-    // user doesn't have enough LINK, print a warning
-    console.log(
-      "Account doesn't have enough LINK to fund contracts, or you're deploying to a network where auto funding isnt' done by default"
-    );
-    console.log(
-      "Please obtain LINK via the faucet at https://" +
-        networkName +
-        ".chain.link/, then run the following command to fund contract with LINK:"
-    );
-    console.log(
-      "npx hardhat fund-link --contract " +
-        contractAddr +
-        " --network " +
-        networkName +
-        additionalMessage
-    );
-    return false;
-  }
-};
+export const developmentChains = ["hardhat", "localhost", "ganache"];
