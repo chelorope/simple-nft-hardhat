@@ -16,6 +16,7 @@ import "./tasks/balance";
 import "./tasks/withdraw-link";
 import "./tasks/block-number";
 import "./tasks/random-number-consumer";
+import "./tasks/pinata";
 
 // import "./tasks/price-consumer";
 // import "./tasks/api-consumer";

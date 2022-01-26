@@ -59,5 +59,3 @@
 //       console.log("Contract doesn't have any LINK to withdraw");
 //     }
 //   });
-
-// export default {};

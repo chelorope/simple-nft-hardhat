@@ -20,7 +20,7 @@ export const autoFundCheck = async (
   linkTokenAddress: string,
   additionalMessage: string
 ) => {
-  const chainId = Number(await getChainId());
+  const chainId = await getChainId();
   console.log("Checking to see if contract can be auto-funded with LINK:");
   const amount = networkConfig[chainId].fundAmount;
   // check to see if user has enough LINK

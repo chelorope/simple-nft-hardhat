@@ -9,5 +9,3 @@ task(
     });
   }
 );
-
-export default {};

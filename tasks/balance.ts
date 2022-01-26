@@ -12,5 +12,3 @@ task("balance", "Prints an account's balance")
 
     console.log(ethers.utils.formatEther(balance), "ETH");
   });
-
-export default {};
