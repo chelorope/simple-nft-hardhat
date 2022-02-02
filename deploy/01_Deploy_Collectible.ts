@@ -1,12 +1,14 @@
 import networkConfig from "../config";
 import { DeployFunction } from "hardhat-deploy/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { isDevelopementChain } from "../scripts/util";
+import { isDevelopementChain, sleep } from "../util";
 
 const deployCollectible: DeployFunction = async ({
   getNamedAccounts,
   deployments,
   getChainId,
+  run,
+  network,
 }: HardhatRuntimeEnvironment) => {
   const { deploy, get, log } = deployments;
   const { deployer } = await getNamedAccounts();
@@ -16,10 +18,8 @@ const deployCollectible: DeployFunction = async ({
   let vrfCoordinatorAddress;
   let additionalMessage = "";
 
-  log("CHAIN ID: ", chainId);
   if (isDevelopementChain(chainId)) {
     const linkToken = await get("LinkToken");
-    log("LINK TOKEN: ", linkToken);
     const VRFCoordinatorMock = await get("VRFCoordinatorMock");
     linkTokenAddress = linkToken.address;
     vrfCoordinatorAddress = VRFCoordinatorMock.address;
@@ -31,27 +31,43 @@ const deployCollectible: DeployFunction = async ({
   const keyHash = CONFIG.keyHash;
   const fee = CONFIG.fee;
 
+  log("Deploying contract from: ", deployer);
+
   const collectible = await deploy("Collectible", {
     from: deployer,
     args: [vrfCoordinatorAddress, linkTokenAddress, keyHash, fee],
     log: true,
   });
 
-  log("Run the following command to fund contract with LINK:");
-  log(
-    "npx hardhat fund-link --contract " +
-      collectible.address +
-      " --network " +
-      CONFIG.name +
-      additionalMessage
-  );
-  log("Then run Collectible contract with the following command");
-  log(
-    "npx hardhat collectible --contract " +
-      collectible.address +
-      " --network " +
-      CONFIG.name
-  );
+  log("Contract deployed on address:", collectible.address);
+
+  if (!isDevelopementChain(chainId)) {
+    log(
+      `https://${
+        network.name !== "mainnet" ? network.name : ""
+      }.etherscan.io/address/${collectible.address}`
+    );
+    log("Verifying contract....");
+    await sleep(30); // Wait for etherscan to list the contract
+    try {
+      await run("verify:verify", {
+        address: collectible.address,
+        constructorArguments: [
+          vrfCoordinatorAddress,
+          linkTokenAddress,
+          keyHash,
+          fee,
+        ],
+        network: network.name,
+      });
+    } catch (error) {
+      log("The contract couldn't be verified yet");
+      log("You can try later, running:");
+      log(
+        `npx hardhat verify --network ${network.name} ${collectible.address} ${vrfCoordinatorAddress} ${linkTokenAddress} ${keyHash} ${fee}`
+      );
+    }
+  }
   log("----------------------------------------------------");
 };
 

@@ -1,6 +1,6 @@
 import { DeployFunction } from "hardhat-deploy/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { isDevelopementChain } from "../scripts/util";
+import { isDevelopementChain } from "../util";
 
 const deployMocks: DeployFunction = async ({
   getNamedAccounts,
@@ -25,14 +25,7 @@ const deployMocks: DeployFunction = async ({
       args: [linkToken.address],
     });
     log("Mocks Deployed!");
-    log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-    log(
-      "You are deploying to a local network, you'll need a local network running to interact"
-    );
-    log(
-      "Please run `npx hardhat console` to interact with the deployed smart contracts!"
-    );
-    log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    log("----------------------------------------------------");
   }
 };
 

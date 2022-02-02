@@ -12,10 +12,12 @@
   "include": [
     "hardhat.config.ts",
     "./scripts",
+    "./tasks",
     "./deploy",
     "./test",
     "typechain/**/*",
-    "config.ts"
+    "config.ts",
+    "util.ts"
   ],
   "files": ["./hardhat.config.ts"]
 }

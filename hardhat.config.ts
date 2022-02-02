@@ -67,10 +67,10 @@ const config: HardhatUserConfig = {
     },
     rinkeby: {
       url: RINKEBY_RPC_URL,
-      // accounts: [PRIVATE_KEY],
-      accounts: {
-        mnemonic: MNEMONIC,
-      },
+      accounts: [PRIVATE_KEY],
+      // accounts: {
+      //   mnemonic: MNEMONIC,
+      // },
       saveDeployments: true,
     },
     ganache: {
@@ -81,10 +81,10 @@ const config: HardhatUserConfig = {
     },
     mainnet: {
       url: MAINNET_RPC_URL,
-      // accounts: [PRIVATE_KEY],
-      accounts: {
-        mnemonic: MNEMONIC,
-      },
+      accounts: [PRIVATE_KEY],
+      // accounts: {
+      //   mnemonic: MNEMONIC,
+      // },
       saveDeployments: true,
     },
     mumbai: {
@@ -102,6 +102,12 @@ const config: HardhatUserConfig = {
     // Your API key for Etherscan
     // Obtain one at https://etherscan.io/
     apiKey: ETHERSCAN_API_KEY,
+  },
+  //@ts-ignore
+  verify: {
+    etherscan: {
+      apiKey: ETHERSCAN_API_KEY,
+    },
   },
   gasReporter: {
     enabled: process.env.REPORT_GAS !== undefined,
