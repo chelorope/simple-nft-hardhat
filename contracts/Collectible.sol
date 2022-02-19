@@ -13,6 +13,7 @@ contract Collectible is ERC721, VRFConsumerBase {
   uint256 public tokenCounter;
   bytes32 public keyhash;
   uint256 public fee;
+  uint32 public maxSupply = 3;
   enum Artwork {
     TWO_OWLS,
     DOGS_HEAD,
@@ -41,7 +42,10 @@ contract Collectible is ERC721, VRFConsumerBase {
   }
 
   function createCollectible() public returns (bytes32) {
-    require(tokenCounter < 2, "All collectibles were already minted");
+    require(
+      tokenCounter < maxSupply - 1,
+      "All collectibles were already minted"
+    );
     bytes32 requestId = requestRandomness(keyhash, fee);
     requestIdToSender[requestId] = msg.sender;
     emit requestedCollectible(requestId, msg.sender);
